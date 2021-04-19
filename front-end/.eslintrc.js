@@ -69,6 +69,7 @@ module.exports = {
     'comma-dangle': 'off',
     'eol-last': 'off',
     'no-multiple-empty-lines': 'off',
+    'no-template-curly-in-string': 'off',
 
 
     // allow debugger during development only
