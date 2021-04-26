@@ -70,6 +70,7 @@ module.exports = {
     'eol-last': 'off',
     'no-multiple-empty-lines': 'off',
     'no-template-curly-in-string': 'off',
+    'next-line spaced-comment': 'off',
 
 
     // allow debugger during development only

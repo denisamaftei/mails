@@ -79,17 +79,11 @@
                         label="Columns"
                         size="sm">
                           <q-list dense>
-                            <q-item tag="label" clickable @click="add('email')">
+                            <q-item v-for="column in columns" :key="column.id" tag="label" clickable @click="add(column)">
                               <q-item-section side>
-                                <q-icon name="mail" />
+                                <q-icon name="add_circle" color="white" />
                               </q-item-section>
-                              <q-item-section>Email</q-item-section>
-                            </q-item>
-                            <q-item tag="label" clickable @click="add('title')">
-                              <q-item-section side>
-                                <q-icon name="title" />
-                              </q-item-section>
-                              <q-item-section>Title</q-item-section>
+                              <q-item-section>{{column}}</q-item-section>
                             </q-item>
                           </q-list>
                         </q-btn-dropdown>
@@ -100,7 +94,7 @@
                         type="submit"
                         :loading="submitting"
                         label="Send"
-                        class="q-mt-md bg-lgs1 text-white">
+                        class="q-mt-md bg-lgs3 text-white">
                           <template v-slot:loading>
                             <q-spinner-facebook />
                           </template>
@@ -119,8 +113,19 @@ export default {
       text: '',
       test: '',
       submitting: false,
-      qeditor: 'Check out the two different types of dropdowns' +
-        ' in each of the "Align" buttons.'
+      qeditor: '<pre>Check out the two different types of dropdowns' +
+        ' in each of the "Align" buttons.</pre>'
+    }
+  },
+  mounted() {
+    this.$store.dispatch("mailsData/initStore");
+  },
+  computed: {
+    body() {
+      return this.$store.getters["mailsData/getBody"];
+    },
+    columns() {
+      return this.$store.getters["mailsData/getColumns"];
     }
   },
   methods: {
@@ -141,7 +146,9 @@ export default {
       const edit = this.$refs.qeditor
       this.$refs.token.hide()
       edit.caret.restore()
-      edit.runCmd('insertHTML', `&nbsp;<div class="qeditor_token row inline items-center" contenteditable="true">&nbsp;<span>${name}</span>&nbsp;<i class="q-icon material-icons cursor-pointer" onclick="this.parentNode.parentNode.removeChild(this.parentNode)">close</i></div>&nbsp;`)
+      edit.runCmd('insertHTML', `<div class="qeditor_token row inline items-center" contenteditable="false"><span contenteditable="true">$${name}$</span><i class="q-icon material-icons cursor-pointer" onclick="this.parentNode.parentNode.removeChild(this.parentNode)">close</i></div>`) 
+      // eslint-disable-next-line spaced-comment
+      //primul split dupa &nbsp; sa pastram doar restul textului si vom renunta la tot ce incepe cu <div> din array-ul respectiv, iar al doilea split dupa $ sa pastram si variabilele
       edit.focus()
     }
   },
@@ -160,32 +167,54 @@ body {
 .q-editor {
     max-width: 70vw;
     min-width: 70vw;
-
+    
+}
+.q-editor__toolbar-group:first-of-type {
+   border-radius: 100%;
+  
+ button {
+   padding-left: 5%;
+   background-color: #1c9cdc!important;
+   color: #fff!important;
+   font-size: .9em!important;
+   border-radius: 10%
+ }
 }
 .q-editor__content {
     overflow-y: auto;
     max-height: 35vh;
+    div {
+      display: inline
+    }
 }
 .absolute-full, .fullscreen, .fixed-full {
   max-width: 100vw
-}
-.pre {
-    word-break: break-all;
-    max-width: inherit;
 }
 .robo {
   width: 10%;
   float: right
 }
 .qeditor_token {
-  background: rgba(0, 0, 0, 0.6);
+  background: #1c9cdc;
   color: white;
   padding: 2px;
-  border-radius: 3px;
+  border-radius: 10%;
   .q-icon {
-    background: rgba(0, 0, 0, 0.2);
+    background: #167bad;
     border-radius: 3px;
   }
+}
+.q-list {
+  background-color: #1c9cdc!important;
+  color:#fff
+}
+.q-btn {
+  font-size: 1.2em;
+  border-radius: 10%;
+  font-weight: bold;
+}
+.q-btn-dropdown--simple * + .q-btn-dropdown__arrow {
+  margin-left: 0
 }
 pre {
   display: inline;
