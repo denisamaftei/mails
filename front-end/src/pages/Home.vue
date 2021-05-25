@@ -3,7 +3,20 @@
         <div class="q-pa-md justify-center">
             <div class="q-gutter-y-md column text-container" >
                 <form @submit.prevent="simulateSubmit" class="q-pa-md">
-                    <q-editor v-model="qeditor" ref="qeditor" :dense="$q.screen.lt.md"
+                  <q-file @input="handleFileUpload"
+        v-model="file"
+        label="Pick a file"
+        filled
+        counter
+        :counter-label="counterLabelFn"
+        accept=".xlsx"
+        style="max-width: 300px"
+      >
+        <template v-slot:prepend>
+          <q-icon name="attach_file" />
+        </template>
+      </q-file>
+                    <q-editor v-model="body" ref="qeditor" :dense="$q.screen.lt.md"
                     :toolbar="[
                     ['token'],
                     [
@@ -79,8 +92,8 @@
                         label="Columns"
                         size="sm">
                           <q-list dense>
-                            <q-item v-for="column in columns" :key="column.id" tag="label" clickable @click="add(column)">
-                              <q-item-section side>
+                            <q-item v-for="column in columns" v-if="column !== undefined" tag="label" clickable @click="add(column)">
+                              <q-item-section   side>
                                 <q-icon name="add_circle" color="white" />
                               </q-item-section>
                               <q-item-section>{{column}}</q-item-section>
@@ -90,7 +103,7 @@
                       </template>
                     </q-editor>
                     <div class="row justify-end">
-                      <q-btn
+                      <q-btn @click="send()"
                         type="submit"
                         :loading="submitting"
                         label="Send"
@@ -100,6 +113,7 @@
                           </template>
                       </q-btn>
                     </div>
+                     
                 </form>
             </div>
         </div>
@@ -107,28 +121,121 @@
     </q-page-container>
 </template>
 <script>
+import readXlsxFile from "read-excel-file";
 export default {
   data () {
     return {
       text: '',
       test: '',
       submitting: false,
-      qeditor: '<pre>Check out the two different types of dropdowns' +
-        ' in each of the "Align" buttons.</pre>'
+      file: null,
+      rows: null,
+      columns: [],
+      body: "Hello Logiscool!",
+      arr: []
     }
   },
   mounted() {
     this.$store.dispatch("mailsData/initStore");
   },
   computed: {
-    body() {
-      return this.$store.getters["mailsData/getBody"];
-    },
-    columns() {
-      return this.$store.getters["mailsData/getColumns"];
-    }
+    // template() {
+    //   return this.$store.getters["mailsData/getTemplate"];
+    // }
+    // columns() {
+    //   return this.$store.getters["mailsData/getColumns"];
+    // }
   },
   methods: {
+    handleFileUpload(e) {
+      // console.log(e);
+      this.file = e;
+
+      const wor = new Worker('worker.js');
+
+      wor.funn = readXlsxFile(this.file).then((rows => {
+        // console.log(rows[i].i)
+        // console.log(rows[1][0])
+
+        let columns = rows[0];
+
+        for(let i = 0; i < columns.length; i++) {
+          if(columns[i] !== null) {
+            //  console.log(columns[i]);
+             this.columns[i] = columns[i]
+           
+          }
+        }
+
+        for(let i = 1; i < rows.length; i++) {     
+          // console.log(rows.length)     //246  
+                  this.arr.push(rows[i])
+            //  console.log(columns[i]);
+            // console.log(rows[j][i].length)
+            // if(rows[j][i] !== null && rows[j][i] !== undefined && rows[j][i] !== "") {
+      
+                // Object.assign(this.arr, {[columns[i]]: ''})
+                // console.log(columns)
+                // this.arr = Object.fromEntries(columns.map(key=>[key,'']));
+                // if(rows[j][i] !== null) {
+                // console.log(rows[j])
+                // }
+                
+            // }
+              
+              // data[i] = rows[i][j];
+              // console.log(data[i])
+          }
+          // console.log(data[i])
+        
+      // for(let i = 1; i < this.arr.length; i++)
+        // console.log(JSON.stringify(this.arr[i][this.columns[0]]))
+        // console.log(this.arr[2])
+        // console.log(JSON.stringify(this.arr[0][0]))
+
+        //  this.arr.forEach(el => {
+        //    console.log(JSON.stringify(el[0]))
+        //  })
+        //  console.log(JSON.stringify(this.arr[0]))
+        // console.log(this.arr)
+                // console.log(Object.keys(this.arr))
+              //  for (const [key, value] of Object.entries(this.arr)) {
+              //     console.log(`${key}: ${value}`);
+              //     }
+         
+      }));
+     
+
+      wor.onmessage = e => {
+        console.log();
+        this.rows = e.data.workbook;
+        // console.log(e)
+      };
+
+      wor.postMessage({
+        file: this.file
+      });
+      
+      // this.$worker
+      //   .run(
+      //     file => {
+      //       console.dir(self);
+      //       return "ali";
+      //     },
+      //     [this.file]
+      //   )
+      //   .then(rows => {
+      //     this.rows = rows;
+      //     console.log(this.rows);
+      //   })
+      //   .catch(e => {
+      //     console.error(e);
+      //   });
+    },
+
+    counterLabelFn ({totalSize}) {
+      return `${totalSize}`
+    },
     simulateSubmit () {
       this.submitting = true
 
@@ -145,12 +252,36 @@ export default {
     add (name) {
       const edit = this.$refs.qeditor
       this.$refs.token.hide()
+      // console.log(this.arr)
+      // console.log(this.columns)
+      for(let i = 0; i < this.columns.length; i++) {
+        if(name === this.columns[i]) {
+          this.arr.forEach(el => {
+           console.log(JSON.stringify(el[i]))
+          //  console.log(this.body)
+         })
+        }
+      }
+      
       edit.caret.restore()
       edit.runCmd('insertHTML', `<div class="qeditor_token row inline items-center" contenteditable="false"><span contenteditable="true">$${name}$</span><i class="q-icon material-icons cursor-pointer" onclick="this.parentNode.parentNode.removeChild(this.parentNode)">close</i></div>`) 
       // eslint-disable-next-line spaced-comment
       //primul split dupa &nbsp; sa pastram doar restul textului si vom renunta la tot ce incepe cu <div> din array-ul respectiv, iar al doilea split dupa $ sa pastram si variabilele
       edit.focus()
-    }
+
+    },
+    send () {
+      // for(let i = 0; i < this.columns.length; i++) {
+      //   // if(name === this.columns[i]) {
+      //     this.arr.forEach(el => {
+      //      console.log(this.body)
+      //    })
+        // }
+      }
+          //  console.log(JSON.stringify(el[i]))
+            
+     
+    
   },
 }
 </script>

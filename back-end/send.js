@@ -1,21 +1,24 @@
 const ExcelJS = require("exceljs");
 const nodemailer = require("nodemailer");
-
 const workbook = new ExcelJS.Workbook();
 
-workbook.xlsx.readFile("./Apelative.xlsx")
-    .then(()=> {
-      const worksheet = workbook.getWorksheet(1);
-      
+    workbook.xlsx.readFile("./Apelative.xlsx")
+    .then(() => {
+    const worksheet = workbook.getWorksheet(1);
+
+    
       // studentName.eachCell((cell, rowNumber) => {
       //   console.log(cell.value);
       // });
       
       // console.log(worksheet.getRow(2).getCell(1).value);
       // worksheet.eachRow((row, rowNumber) => {
-      for(let i = 2; i < 3; i++) {
-      
-      const sendController = nodemailer.createTransport({
+    setOptions: () => {
+
+    
+    for (let i = 2; i < 3; i++) {
+
+        const sendController = nodemailer.createTransport({
         host: "smtp.gmail.com", // Send mail using built-in transport View support list: https://nodemailer.com/smtp/well-known/
         port: 465, // SMTP port
         secure: true, // used SSL
@@ -138,5 +141,5 @@ workbook.xlsx.readFile("./Apelative.xlsx")
             console.log("**********OK**********" + info);
           }
         });
-      }});
+      }}})
     // })

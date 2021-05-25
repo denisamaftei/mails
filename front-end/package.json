@@ -11,8 +11,11 @@
     "@quasar/extras": "^1.0.0",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
+    "exceljs": "^4.2.1",
     "quasar": "^1.0.0",
-    "vue": "^2.6.12"
+    "read-excel-file": "^5.1.0",
+    "vue": "^2.6.12",
+    "vue-worker": "^1.2.1"
   },
   "devDependencies": {
     "@quasar/app": "^2.0.0",
