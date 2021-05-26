@@ -132,11 +132,13 @@ export default {
       rows: null,
       columns: [],
       body: "Hello Logiscool!",
-      arr: []
+      arr: [],
+      mailBody: []
     }
   },
   mounted() {
-    this.$store.dispatch("mailsData/initStore");
+    //  this.$el.innerHTML = this.body;
+    // this.$store.dispatch("mailsData/initStore");
   },
   computed: {
     // template() {
@@ -193,9 +195,9 @@ export default {
         // console.log(this.arr[2])
         // console.log(JSON.stringify(this.arr[0][0]))
 
-        //  this.arr.forEach(el => {
-        //    console.log(JSON.stringify(el[0]))
-        //  })
+         this.arr.forEach(el => {
+           console.log(JSON.stringify(el[0]))
+         })
         //  console.log(JSON.stringify(this.arr[0]))
         // console.log(this.arr)
                 // console.log(Object.keys(this.arr))
@@ -254,30 +256,36 @@ export default {
       this.$refs.token.hide()
       // console.log(this.arr)
       // console.log(this.columns)
-      for(let i = 0; i < this.columns.length; i++) {
-        if(name === this.columns[i]) {
-          this.arr.forEach(el => {
-           console.log(JSON.stringify(el[i]))
-          //  console.log(this.body)
-         })
-        }
-      }
+
       
       edit.caret.restore()
-      edit.runCmd('insertHTML', `<div class="qeditor_token row inline items-center" contenteditable="false"><span contenteditable="true">$${name}$</span><i class="q-icon material-icons cursor-pointer" onclick="this.parentNode.parentNode.removeChild(this.parentNode)">close</i></div>`) 
+      edit.runCmd('insertHTML', `<div class="qeditor_token row inline items-center" contenteditable="false"><span contenteditable="true"> $${name}$ </span><i class="q-icon material-icons cursor-pointer" onclick="this.parentNode.remove(this.parentNode)">close</i></div>`) 
       // eslint-disable-next-line spaced-comment
       //primul split dupa &nbsp; sa pastram doar restul textului si vom renunta la tot ce incepe cu <div> din array-ul respectiv, iar al doilea split dupa $ sa pastram si variabilele
       edit.focus()
+      
+            for(let i = 0; i < this.columns.length; i++) {
+        if(name === this.columns[i] || this.body.includes(this.columns[i])) {
+          this.mailBody = [];
+          this.arr.forEach(el => {
+          //  console.log(JSON.stringify(el[i]))
+          let regex = new RegExp(this.columns[i], "gi")
+          
+          this.mailBody.push(this.body.replace(regex,el[i]))
+         })
+        }
+      }
 
     },
     send () {
-      // for(let i = 0; i < this.columns.length; i++) {
-      //   // if(name === this.columns[i]) {
-      //     this.arr.forEach(el => {
-      //      console.log(this.body)
-      //    })
-        // }
-      }
+        
+        // if(name === this.columns[i]) {
+          for(let i = 0; i < this.mailBody.length; i++) {
+           console.log(this.mailBody[i])
+          }
+
+        }
+
           //  console.log(JSON.stringify(el[i]))
             
      
