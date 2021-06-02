@@ -133,7 +133,7 @@ export default {
       columns: [],
       body: "Hello Logiscool!",
       arr: [],
-      mailBody: []
+      // mailBody: []
     }
   },
   mounted() {
@@ -263,33 +263,98 @@ export default {
       // eslint-disable-next-line spaced-comment
       //primul split dupa &nbsp; sa pastram doar restul textului si vom renunta la tot ce incepe cu <div> din array-ul respectiv, iar al doilea split dupa $ sa pastram si variabilele
       edit.focus()
-      
+      // let regex = [];
             for(let i = 0; i < this.columns.length; i++) {
-        if(name === this.columns[i] || this.body.includes(this.columns[i])) {
-          this.mailBody = [];
-          this.arr.forEach(el => {
-          //  console.log(JSON.stringify(el[i]))
-          let regex = new RegExp(this.columns[i], "gi")
+            //  regex.push(new RegExp(this.columns[i], "gi"))
+             
+              // console.log(this.columns[i])
+        // if(this.body.includes(this.columns[i])) {
+          for(let j = 0; j < this.arr.length; j++) {
+            this.mailBody = this.body.replace(this.columns[i],this.arr[j][i])
+            // this.body = this.mailBody;
+          }
+        // }
+        //    console.log(this.columns[i])
+        //   this.arr.forEach(el => {
+        //   //  console.log(JSON.stringify(el[i]))
+        //   console.log(this.columns[i])
           
-          this.mailBody.push(this.body.replace(regex,el[i]))
-         })
-        }
+          
+        //   console.log(el[i])
+        //  console.log(regex[i])
+        //   this.mailBody.push(this.body.replace(this.columns[i],el[i][i]))
+          
+         
+
+
+        //  })
+        // }
       }
+      
+      //     console.log("*******************************************************")
+
+      //  console.log(this.mailBody)
+      //     console.log("*******************************************************")
 
     },
     send () {
-        
-        // if(name === this.columns[i]) {
-          for(let i = 0; i < this.mailBody.length; i++) {
-           console.log(this.mailBody[i])
-          }
-
+        // this.mailBody = this.body;
+        // for(let i = 0; i < this.columns.length; i++) {
+        //     //  regex.push(new RegExp(this.columns[i], "gi"))
+             
+        //       // console.log(this.columns[i])
+        // // if(this.body.includes(this.columns[i])) {
+        //   for(let j = 0; j < this.arr.length; j++) {
+        //     if(this.body.includes(this.columns[i])) {
+        //       this.mailBody = this.body.replace(this.columns[i],this.arr[j][i])
+        //       console.log(this.mailBody)
+        //     }
+        //     // this.mailBody = this.body.replace(this.columns[i],this.arr[j][i])
+        //     // this.body = this.mailBody;
+        //   }
+        let mailBody = [];
+        console.log(this.arr.length)
+        for(let i = 0; i< this.arr.length; i++) {
+          // console.log(this.columns[i])
+            mailBody[i] = this.body;
         }
+        for(let i = 0; i < mailBody.length; i++) {
+          for(let j = 0; j < this.columns.length; j++) {
+            mailBody[i] = mailBody[i].replace(this.columns[j],this.arr[i][j])
+          }
+        }
+      console.log(mailBody)
+      
+        // console.log(mailBody.length)
+        // for(let i = 0; i < mailBody.length; i++) {
+        //   for(let j = 1; j < this.columns.length; j++) {
+        //     mailBody[i] = this.body.replace(this.columns[i], this.arr[j][i])
+        //     console.log(mailBody[i])
+        //   }
+          // if(mailBody.includes(this.columns[j])) {
+
+          // }
+        // }
+          //  console.log("*************************"+mailBody)
+
+        // if(name === this.columns[i]) {
+          // for(let i = 0; i < this.mailBody.length; i++) {
+          //  console.log(this.mailBody)
+          // }
+          // for(let i = 0; i < this.arr.length; i++) {
+          //   this.columns.forEach(column => {
+          //     if(this.body.includes(column[i]))
+          //     this.mailBody.push(this.body.replace(column[i], this.arr[i][i]))
+          //   })
+          // }
+
+        // console.log(this.mailBody)
+        
 
           //  console.log(JSON.stringify(el[i]))
             
-     
-    
+  
+    }
   },
 }
 </script>
