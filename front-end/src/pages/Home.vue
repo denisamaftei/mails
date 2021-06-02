@@ -1,402 +1,323 @@
 <template>
-    <q-page-container >
-        <div class="q-pa-md justify-center">
-            <div class="q-gutter-y-md column text-container" >
-                <form @submit.prevent="simulateSubmit" class="q-pa-md">
-                  <q-file @input="handleFileUpload"
-        v-model="file"
-        label="Pick a file"
-        filled
-        counter
-        :counter-label="counterLabelFn"
-        accept=".xlsx"
-        style="max-width: 300px"
-      >
-        <template v-slot:prepend>
-          <q-icon name="attach_file" />
-        </template>
-      </q-file>
-                    <q-editor v-model="body" ref="qeditor" :dense="$q.screen.lt.md"
-                    :toolbar="[
-                    ['token'],
-                    [
-                    {
-                      label: $q.lang.editor.align,
-                      icon: $q.iconSet.editor.align,
-                      fixedLabel: true,
-                      list: 'only-icons',
-                      options: ['left', 'center', 'right', 'justify']
-                      }
-                    ],
-                    ['bold', 'italic', 'strike', 'underline', 'subscript', 'superscript'],
-                    ['hr', 'link', 'custom_btn'],
-                    ['print', 'fullscreen'],
-                    [
-                      {
-                        label: $q.lang.editor.fontSize,
-                        icon: $q.iconSet.editor.fontSize,
-                        fixedLabel: true,
-                        fixedIcon: true,
-                        list: 'no-icons',
-                        options: [
-                        'size-1',
-                        'size-2',
-                        'size-3',
-                        'size-4',
-                        'size-5',
-                        'size-6',
-                        'size-7'
-                        ]
-                      },
-                      {
-                        label: $q.lang.editor.defaultFont,
-                        icon: $q.iconSet.editor.font,
-                        fixedIcon: true,
-                        list: 'no-icons',
-                        options: [
-                        'default_font',
-                        'arial',
-                        'arial_black',
-                        'comic_sans',
-                        'courier_new',
-                        'impact',
-                        'lucida_grande',
-                        'times_new_roman',
-                        'verdana'
-                        ]
-                      },
-                    'removeFormat'
-                    ],
-                    ['quote', 'unordered', 'ordered', 'outdent', 'indent'],
-                    ['undo', 'redo'],
-                    ['viewsource']
-                    ]"
-                    :fonts="{
-                      arial: 'Arial',
-                      arial_black: 'Arial Black',
-                      comic_sans: 'Comic Sans MS',
-                      courier_new: 'Courier New',
-                      impact: 'Impact',
-                      lucida_grande: 'Lucida Grande',
-                      times_new_roman: 'Times New Roman',
-                      verdana: 'Verdana'
-                      }">
-                      <template v-slot:token>
-                        <q-btn-dropdown
-                        dense no-caps
-                        ref="token"
-                        no-wrap
-                        unelevated
-                        color="white"
-                        text-color="primary"
-                        label="Columns"
-                        size="sm">
-                          <q-list dense>
-                            <q-item v-for="column in columns" v-if="column !== undefined" tag="label" clickable @click="add(column)">
-                              <q-item-section   side>
-                                <q-icon name="add_circle" color="white" />
-                              </q-item-section>
-                              <q-item-section>{{column}}</q-item-section>
-                            </q-item>
-                          </q-list>
-                        </q-btn-dropdown>
-                      </template>
-                    </q-editor>
-                    <div class="row justify-end">
-                      <q-btn @click="send()"
-                        type="submit"
-                        :loading="submitting"
-                        label="Send"
-                        class="q-mt-md bg-lgs3 text-white">
-                          <template v-slot:loading>
-                            <q-spinner-facebook />
-                          </template>
-                      </q-btn>
-                    </div>
-                     
-                </form>
-            </div>
-        </div>
-      <img class="robo" src="../assets/happy_robot.svg"/>
-    </q-page-container>
+  <q-page-container>
+    <div class="q-pa-md justify-center">
+      <div class="q-gutter-y-md column text-container">
+        <form @submit.prevent="simulateSubmit" class="q-pa-md">
+          <div class="q-mt-md q-mr-md row">
+            <q-file
+              class="q-mr-md"
+              @input="handleFileUpload"
+              v-model="file"
+              label="Pick the Excel file"
+              filled
+              counter
+              :counter-label="counterLabelFn"
+              accept=".xlsx"
+              style="max-width: 300px"
+            >
+              <template v-slot:prepend>
+                <q-icon name="attach_file" />
+              </template>
+            </q-file>
+            <q-file
+              @input="handleAttach"
+              v-model="attach"
+              label="Pick the Attach file"
+              filled
+              counter
+              :counter-label="counterLabelFn"
+              accept=".pdf"
+              style="max-width: 300px"
+            >
+              <template v-slot:prepend>
+                <q-icon name="attach_file" />
+              </template>
+            </q-file>
+          </div>
+          <q-editor
+            v-model="body"
+            ref="qeditor"
+            :dense="$q.screen.lt.md"
+            :toolbar="[
+              ['token'],
+              [
+                {
+                  label: $q.lang.editor.align,
+                  icon: $q.iconSet.editor.align,
+                  fixedLabel: true,
+                  list: 'only-icons',
+                  options: ['left', 'center', 'right', 'justify']
+                }
+              ],
+              [
+                'bold',
+                'italic',
+                'strike',
+                'underline',
+                'subscript',
+                'superscript'
+              ],
+              ['hr', 'link', 'custom_btn'],
+              ['print', 'fullscreen'],
+              [
+                {
+                  label: $q.lang.editor.fontSize,
+                  icon: $q.iconSet.editor.fontSize,
+                  fixedLabel: true,
+                  fixedIcon: true,
+                  list: 'no-icons',
+                  options: [
+                    'size-1',
+                    'size-2',
+                    'size-3',
+                    'size-4',
+                    'size-5',
+                    'size-6',
+                    'size-7'
+                  ]
+                },
+                {
+                  label: $q.lang.editor.defaultFont,
+                  icon: $q.iconSet.editor.font,
+                  fixedIcon: true,
+                  list: 'no-icons',
+                  options: [
+                    'default_font',
+                    'arial',
+                    'arial_black',
+                    'comic_sans',
+                    'courier_new',
+                    'impact',
+                    'lucida_grande',
+                    'times_new_roman',
+                    'verdana'
+                  ]
+                },
+                'removeFormat'
+              ],
+              ['quote', 'unordered', 'ordered', 'outdent', 'indent'],
+              ['undo', 'redo'],
+              ['viewsource']
+            ]"
+            :fonts="{
+              arial: 'Arial',
+              arial_black: 'Arial Black',
+              comic_sans: 'Comic Sans MS',
+              courier_new: 'Courier New',
+              impact: 'Impact',
+              lucida_grande: 'Lucida Grande',
+              times_new_roman: 'Times New Roman',
+              verdana: 'Verdana'
+            }"
+          >
+            <template v-slot:token>
+              <q-btn-dropdown
+                dense
+                no-caps
+                ref="token"
+                no-wrap
+                unelevated
+                color="white"
+                text-color="primary"
+                label="Columns"
+                size="sm"
+              >
+                <q-list dense>
+                  <q-item
+                    v-for="column in columns"
+                    v-if="column !== undefined"
+                    tag="label"
+                    clickable
+                    @click="add(column)"
+                  >
+                    <q-item-section side>
+                      <q-icon name="add_circle" color="white" />
+                    </q-item-section>
+                    <q-item-section>{{ column }}</q-item-section>
+                  </q-item>
+                </q-list>
+              </q-btn-dropdown>
+            </template>
+          </q-editor>
+
+          <div class="row justify-end">
+            <q-btn
+              @click="send()"
+              type="submit"
+              :loading="submitting"
+              label="Send"
+              class="q-mt-md bg-lgs3 text-white"
+            >
+              <template v-slot:loading>
+                <q-spinner-facebook />
+              </template>
+            </q-btn>
+          </div>
+        </form>
+      </div>
+    </div>
+    <img class="robo" src="../assets/happy_robot.svg" />
+  </q-page-container>
 </template>
 <script>
 import readXlsxFile from "read-excel-file";
+import axios from "app/node_modules/axios";
 export default {
-  data () {
+  data() {
     return {
-      text: '',
-      test: '',
+      text: "",
+      test: "",
       submitting: false,
       file: null,
       rows: null,
       columns: [],
       body: "Hello Logiscool!",
       arr: [],
-      // mailBody: []
-    }
+      attach: null
+    };
   },
-  mounted() {
-    //  this.$el.innerHTML = this.body;
-    // this.$store.dispatch("mailsData/initStore");
-  },
-  computed: {
-    // template() {
-    //   return this.$store.getters["mailsData/getTemplate"];
-    // }
-    // columns() {
-    //   return this.$store.getters["mailsData/getColumns"];
-    // }
-  },
+
   methods: {
+    handleAttach(e) {
+      this.attach = e;
+      console.log(this.attach);
+    },
     handleFileUpload(e) {
-      // console.log(e);
       this.file = e;
 
-      const wor = new Worker('worker.js');
+      const wor = new Worker("worker.js");
 
-      wor.funn = readXlsxFile(this.file).then((rows => {
-        // console.log(rows[i].i)
-        // console.log(rows[1][0])
-
+      wor.funn = readXlsxFile(this.file).then(rows => {
         let columns = rows[0];
 
-        for(let i = 0; i < columns.length; i++) {
-          if(columns[i] !== null) {
-            //  console.log(columns[i]);
-             this.columns[i] = columns[i]
-           
+        for (let i = 0; i < columns.length; i++) {
+          if (columns[i] !== null) {
+            this.columns[i] = columns[i];
           }
         }
 
-        for(let i = 1; i < rows.length; i++) {     
-          // console.log(rows.length)     //246  
-                  this.arr.push(rows[i])
-            //  console.log(columns[i]);
-            // console.log(rows[j][i].length)
-            // if(rows[j][i] !== null && rows[j][i] !== undefined && rows[j][i] !== "") {
-      
-                // Object.assign(this.arr, {[columns[i]]: ''})
-                // console.log(columns)
-                // this.arr = Object.fromEntries(columns.map(key=>[key,'']));
-                // if(rows[j][i] !== null) {
-                // console.log(rows[j])
-                // }
-                
-            // }
-              
-              // data[i] = rows[i][j];
-              // console.log(data[i])
-          }
-          // console.log(data[i])
-        
-      // for(let i = 1; i < this.arr.length; i++)
-        // console.log(JSON.stringify(this.arr[i][this.columns[0]]))
-        // console.log(this.arr[2])
-        // console.log(JSON.stringify(this.arr[0][0]))
+        for (let i = 1; i < rows.length; i++) {
+          this.arr.push(rows[i]);
+        }
 
-         this.arr.forEach(el => {
-           console.log(JSON.stringify(el[0]))
-         })
-        //  console.log(JSON.stringify(this.arr[0]))
-        // console.log(this.arr)
-                // console.log(Object.keys(this.arr))
-              //  for (const [key, value] of Object.entries(this.arr)) {
-              //     console.log(`${key}: ${value}`);
-              //     }
-         
-      }));
-     
+        this.arr.forEach(el => {
+          console.log(JSON.stringify(el[0]));
+        });
+      });
 
       wor.onmessage = e => {
         console.log();
         this.rows = e.data.workbook;
-        // console.log(e)
       };
 
       wor.postMessage({
         file: this.file
       });
-      
-      // this.$worker
-      //   .run(
-      //     file => {
-      //       console.dir(self);
-      //       return "ali";
-      //     },
-      //     [this.file]
-      //   )
-      //   .then(rows => {
-      //     this.rows = rows;
-      //     console.log(this.rows);
-      //   })
-      //   .catch(e => {
-      //     console.error(e);
-      //   });
     },
 
-    counterLabelFn ({totalSize}) {
-      return `${totalSize}`
+    counterLabelFn({ totalSize }) {
+      return `${totalSize}`;
     },
-    simulateSubmit () {
-      this.submitting = true
+    simulateSubmit() {
+      this.submitting = true;
 
-      // Simulating a delay here.
-      // When we are done, we reset "submitting"
-      // Boolean to false to restore the
-      // initial state.
       setTimeout(() => {
-        // delay simulated, we are done,
-        // now restoring submit to its initial state
-        this.submitting = false
-      }, 3000)
+        this.submitting = false;
+      }, 3000);
     },
-    add (name) {
-      const edit = this.$refs.qeditor
-      this.$refs.token.hide()
-      // console.log(this.arr)
-      // console.log(this.columns)
+    add(name) {
+      const edit = this.$refs.qeditor;
+      this.$refs.token.hide();
 
-      
-      edit.caret.restore()
-      edit.runCmd('insertHTML', `<div class="qeditor_token row inline items-center" contenteditable="false"><span contenteditable="true"> $${name}$ </span><i class="q-icon material-icons cursor-pointer" onclick="this.parentNode.remove(this.parentNode)">close</i></div>`) 
-      // eslint-disable-next-line spaced-comment
-      //primul split dupa &nbsp; sa pastram doar restul textului si vom renunta la tot ce incepe cu <div> din array-ul respectiv, iar al doilea split dupa $ sa pastram si variabilele
-      edit.focus()
-      // let regex = [];
-            for(let i = 0; i < this.columns.length; i++) {
-            //  regex.push(new RegExp(this.columns[i], "gi"))
-             
-              // console.log(this.columns[i])
-        // if(this.body.includes(this.columns[i])) {
-          for(let j = 0; j < this.arr.length; j++) {
-            this.mailBody = this.body.replace(this.columns[i],this.arr[j][i])
-            // this.body = this.mailBody;
-          }
-        // }
-        //    console.log(this.columns[i])
-        //   this.arr.forEach(el => {
-        //   //  console.log(JSON.stringify(el[i]))
-        //   console.log(this.columns[i])
-          
-          
-        //   console.log(el[i])
-        //  console.log(regex[i])
-        //   this.mailBody.push(this.body.replace(this.columns[i],el[i][i]))
-          
-         
+      edit.caret.restore();
+      edit.runCmd(
+        "insertHTML",
+        `<div class="qeditor_token row inline items-center" contenteditable="false"><span contenteditable="true"> $${name}$ </span><i class="q-icon material-icons cursor-pointer" onclick="this.parentNode.remove(this.parentNode)">close</i></div>`
+      );
 
-
-        //  })
-        // }
+      edit.focus();
+      for (let i = 0; i < this.columns.length; i++) {
+        for (let j = 0; j < this.arr.length; j++) {
+          this.mailBody = this.body.replace(this.columns[i], this.arr[j][i]);
+        }
       }
-      
-      //     console.log("*******************************************************")
-
-      //  console.log(this.mailBody)
-      //     console.log("*******************************************************")
-
     },
-    send () {
-        // this.mailBody = this.body;
-        // for(let i = 0; i < this.columns.length; i++) {
-        //     //  regex.push(new RegExp(this.columns[i], "gi"))
-             
-        //       // console.log(this.columns[i])
-        // // if(this.body.includes(this.columns[i])) {
-        //   for(let j = 0; j < this.arr.length; j++) {
-        //     if(this.body.includes(this.columns[i])) {
-        //       this.mailBody = this.body.replace(this.columns[i],this.arr[j][i])
-        //       console.log(this.mailBody)
-        //     }
-        //     // this.mailBody = this.body.replace(this.columns[i],this.arr[j][i])
-        //     // this.body = this.mailBody;
-        //   }
-        let mailBody = [];
-        console.log(this.arr.length)
-        for(let i = 0; i< this.arr.length; i++) {
-          // console.log(this.columns[i])
-            mailBody[i] = this.body;
+    send() {
+      let mailBody = [];
+      console.log(this.arr.length);
+      for (let i = 0; i < this.arr.length; i++) {
+        mailBody[i] = this.body;
+      }
+      for (let i = 0; i < mailBody.length; i++) {
+        for (let j = 0; j < this.columns.length; j++) {
+          mailBody[i] = mailBody[i].replace(this.columns[j], this.arr[i][j]);
         }
-        for(let i = 0; i < mailBody.length; i++) {
-          for(let j = 0; j < this.columns.length; j++) {
-            mailBody[i] = mailBody[i].replace(this.columns[j],this.arr[i][j])
-          }
-        }
-      console.log(mailBody)
-      
-        // console.log(mailBody.length)
-        // for(let i = 0; i < mailBody.length; i++) {
-        //   for(let j = 1; j < this.columns.length; j++) {
-        //     mailBody[i] = this.body.replace(this.columns[i], this.arr[j][i])
-        //     console.log(mailBody[i])
-        //   }
-          // if(mailBody.includes(this.columns[j])) {
+      }
 
-          // }
-        // }
-          //  console.log("*************************"+mailBody)
-
-        // if(name === this.columns[i]) {
-          // for(let i = 0; i < this.mailBody.length; i++) {
-          //  console.log(this.mailBody)
-          // }
-          // for(let i = 0; i < this.arr.length; i++) {
-          //   this.columns.forEach(column => {
-          //     if(this.body.includes(column[i]))
-          //     this.mailBody.push(this.body.replace(column[i], this.arr[i][i]))
-          //   })
-          // }
-
-        // console.log(this.mailBody)
-        
-
-          //  console.log(JSON.stringify(el[i]))
-            
-  
+      for (let i = 0; i < mailBody.length; i++) {
+        console.log("*********************");
+        let formData = new FormData();
+        formData.append("file", this.attach);
+        formData.append("html", mailBody[i]);
+        console.log(formData.getAll("file"));
+        console.log(formData.getAll("html"));
+        axios
+          .post("http://localhost:3000/api/send", formData, {
+            headers: {
+              "Content-Type": "multipart/form-data"
+            }
+          })
+          .then(() => {
+            console.log("SUCCESS!!");
+          })
+          .catch(() => {
+            console.log("FAILURE!!");
+          });
+      }
     }
-  },
-}
+  }
+};
 </script>
-<style lang="scss" >
+<style lang="scss">
 body {
   background-image: url("../assets/patternpad.svg");
 }
 .text-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 30em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30em;
 }
 .q-editor {
-    max-width: 70vw;
-    min-width: 70vw;
-    
+  max-width: 70vw;
+  min-width: 70vw;
 }
 .q-editor__toolbar-group:first-of-type {
-   border-radius: 100%;
-  
- button {
-   padding-left: 5%;
-   background-color: #1c9cdc!important;
-   color: #fff!important;
-   font-size: .9em!important;
-   border-radius: 10%
- }
+  border-radius: 100%;
+
+  button {
+    padding-left: 5%;
+    background-color: #1c9cdc !important;
+    color: #fff !important;
+    font-size: 0.9em !important;
+    border-radius: 10%;
+  }
 }
 .q-editor__content {
-    overflow-y: auto;
-    max-height: 35vh;
-    div {
-      display: inline
-    }
+  overflow-y: auto;
+  max-height: 35vh;
+  div {
+    display: inline;
+  }
 }
-.absolute-full, .fullscreen, .fixed-full {
-  max-width: 100vw
+.absolute-full,
+.fullscreen,
+.fixed-full {
+  max-width: 100vw;
 }
 .robo {
   width: 10%;
-  float: right
+  float: right;
 }
 .qeditor_token {
   background: #1c9cdc;
@@ -409,8 +330,8 @@ body {
   }
 }
 .q-list {
-  background-color: #1c9cdc!important;
-  color:#fff
+  background-color: #1c9cdc !important;
+  color: #fff;
 }
 .q-btn {
   font-size: 1.2em;
@@ -418,7 +339,7 @@ body {
   font-weight: bold;
 }
 .q-btn-dropdown--simple * + .q-btn-dropdown__arrow {
-  margin-left: 0
+  margin-left: 0;
 }
 pre {
   display: inline;
